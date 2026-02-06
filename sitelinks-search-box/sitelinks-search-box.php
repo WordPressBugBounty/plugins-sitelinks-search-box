@@ -1,56 +1,72 @@
 <?php
 /**
-Plugin Name: Sitelinks Search Box
-Plugin URI: http://apasionados.es
-Description: Adds the JSON-LD schema.org markup for the "Google Sitelinks Search Box" on the homepage. This new feature was presented on the <a href="http://googlewebmastercentral.blogspot.com.es/2014/09/improved-sitelinks-search-box.html" target="_blank">Official Google Webmaster Central Blog</a> (05 Sep 2014 07:44 AM PDT). There is more info on the <a href="https://developers.google.com/webmasters/richsnippets/sitelinkssearch">Google Developers Website</a>.
-Version: 1.3
-Author: Apasionados.es
-Author URI: http://apasionados.es
-License: GPL2
-Text Domain: ap_sitelinks_search_box
-*/
- 
- /*  Copyright 2014  Apasionados.es  (email: info@apasionados.es)
+ * Plugin Name: Sitelinks Search Box
+ * Plugin URI: http://apasionados.es
+ * Description: Adds the JSON-LD schema.org markup for the "Google Sitelinks Search Box" on the homepage.
+ * Version: 1.5
+ * Author: Apasionados.es
+ * Author URI: http://apasionados.es
+ * License: GPL2
+ * Text Domain: ap_sitelinks_search_box
+ * Domain Path: /languages
+ */
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as 
-    published by the Free Software Foundation.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-$plugin_header_translate = array( __('Sitelinks Search Box', 'ap_sitelinks_search_box'), __('Adds the JSON-LD schema.org markup for the "Google Sitelinks Search Box" on the homepage. This new feature was presented on the <a href="http://googlewebmastercentral.blogspot.com.es/2014/09/improved-sitelinks-search-box.html" target="_blank">Official Google Webmaster Central Blog</a> (05 Sep 2014 07:44 AM PDT). There is more info on the <a href="https://developers.google.com/webmasters/richsnippets/sitelinkssearch">Google Developers Website</a>.', 'ap_sitelinks_search_box') );
-
-add_action( 'admin_init', 'ap_sitelinks_search_box_load_language' );
-function ap_sitelinks_search_box_load_language() {
-	load_plugin_textdomain( 'ap_sitelinks_search_box', false,  dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Prevent direct access.
 }
 
-function ap_sitelinks_search_box (){
-	// @link  https://developers.google.com/structured-data/site-name
-	// @link https://developers.google.com/structured-data/slsb-overview
-	if ( is_front_page() && !defined('WPSEO_VERSION') ) {
-		echo PHP_EOL . '<script type="application/ld+json">' . PHP_EOL;
-		echo '{' . PHP_EOL;
-		echo '  "@context": "http://schema.org",' . PHP_EOL;
-		echo '  "@type": "WebSite",' . PHP_EOL;
-		echo '  "url": "' . get_home_url() . '/",' . PHP_EOL;
-		echo '  "potentialAction": {' . PHP_EOL;
-		echo '    "@type": "SearchAction",' . PHP_EOL;
-		echo '    "target": "' . get_home_url() . '/?s={search_term}",' . PHP_EOL;
-		echo '    "query-input": "required name=search_term"' . PHP_EOL;
-		echo '  }' . PHP_EOL;
-		echo '}' . PHP_EOL;
-		echo '</script>' . PHP_EOL;
-	}
-} 
-add_action( 'wp_footer', 'ap_sitelinks_search_box', 10000 );
+define( 'AP_SLSB_TEXTDOMAIN', 'ap_sitelinks_search_box' );
 
-?>
+/**
+ * Load translations at the correct time.
+ */
+function ap_slsb_load_textdomain() {
+	load_plugin_textdomain(
+		AP_SLSB_TEXTDOMAIN,
+		false,
+		dirname( plugin_basename( __FILE__ ) ) . '/languages'
+	);
+}
+add_action( 'plugins_loaded', 'ap_slsb_load_textdomain' );
+
+/**
+ * Whether a schema plugin is already likely handling sitelinks search box.
+ * (Yoast SEO commonly does.)
+ */
+function ap_slsb_is_schema_handled_elsewhere() {
+	return defined( 'WPSEO_VERSION' ) || class_exists( 'WPSEO_Frontend' ) || function_exists( 'wpseo_init' );
+}
+
+/**
+ * Output JSON-LD for Google's Sitelinks Search Box on the front page.
+ */
+function ap_slsb_output_jsonld() {
+	if ( ! is_front_page() ) {
+		return;
+	}
+
+	if ( ap_slsb_is_schema_handled_elsewhere() ) {
+		return;
+	}
+
+	$site_url   = trailingslashit( home_url( '/' ) );
+	$search_url = add_query_arg( 's', '{search_term}', $site_url );
+
+	$data = array(
+		'@context'        => 'https://schema.org',
+		'@type'           => 'WebSite',
+		'url'             => esc_url_raw( $site_url ),
+		'potentialAction' => array(
+			'@type'       => 'SearchAction',
+			'target'      => esc_url_raw( $search_url ),
+			'query-input' => 'required name=search_term',
+		),
+	);
+
+	echo "\n" . '<script type="application/ld+json">' . "\n";
+	echo wp_json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . "\n";
+	echo "</script>\n";
+}
+
+// wp_head is typical for structured data. If you prefer footer, switch back to wp_footer.
+add_action( 'wp_head', 'ap_slsb_output_jsonld', 20 );

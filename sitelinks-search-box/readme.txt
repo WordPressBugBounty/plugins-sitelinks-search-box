@@ -1,10 +1,10 @@
 ﻿=== Sitelinks Search Box ===
 Contributors: apasionados, netconsulting
 Donate link: http://apasionados.es/
-Tags: search engines, sitelinks search box, google, google sitelinks search box, google sitelinks, schema.org, JSON-LD
+Tags: sitelinks search box, google sitelinks search box, google sitelinks
 Requires at least: 3.0.1
-Tested up to: 6.3
-Stable tag: 1.3
+Tested up to: 6.9
+Stable tag: 1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,6 +12,16 @@ Adds the JSON-LD schema.org markup for the "Google Sitelinks Search Box" on the 
 
 
 == Description ==
+
+> **PLEASE NOTE**: Since November 2024 [Google doesn’t support the schema for the Sitelinks Search Box anymore](developers.google.com/search/blog/2024/10/sitelinks-search-box?hl=en). After more than ten years Search Advocate John Mueller confirmed that the feature will be retired and the searchbox will not appear in the SERPs anymore.
+
+> **Since November 2024 there is no need to install this plugin.**
+
+> Quoting the post from Google Developers: _While you can remove sitelinks search box structured data from your site, there's no need to do so_. _Unsupported structured data like this won't cause issues in Search, and won't trigger errors in Search Console reports_. 
+
+>If you are using tis plugin and reading this readme.txt file, **you can uninstall it**.
+
+**xxx PLUGIN DESCRIPTION (until November 2024) xxx**
 
 This plugin adds the JSON-LD schema.org markup for the "Google Sitelinks Search Box" on the homepage.
 
@@ -29,16 +39,11 @@ This plugin adds the schema.org JSON-JD markup for the "Google Sitelinks Search 
 After activating the plugin you only have to "Wait for Google Search algorithms to identify your site as a candidate for the new sitelinks search box".
 
 = SITELINK SEARCH BOX in your Language! =
-This first release is avaliable in English and Spanish. In the languages folder we have included the necessary files to translate this plugin.
+The plugin was released first in English and Spanish (es_ES). In the "languages" folder we have included the necessary files to translate this plugin. Translation to ar_SA, tr_TR, de_DE, fr_FR and ru_RU was added in further versions.
 
-If you would like the plugin in your language and you're good at translating, please drop us a line at [Contact us](http://apasionados.es/contacto/index.php?desde=wordpress-org-sitelinksearchbox-home).
+If you would like the plugin in your language and you're good at translating, please use the [native WordPress Translation](https://translate.wordpress.org/) functionality.
 
-* Translation to es_ES by [Divulga.Media](http://divulga.media).
-* Translation to ar_SA by Majed Atwi: [سيو بالعربي](http://www.seo-ar.net).
-* Translation to tr_TR by Ersin Tezcan: [Ersin Tezcan](http://www.seondex.com).
-* Translation to de_DE by Ben.
-* Translation to fr_FR by bijiguen: [التقني](http://www.th3technician.com).
-* Translation to ru_RU by Alexey of [dGlance](http://ru.dglance.com/).
+New to Translating a plugin? First read through the [Translator Handbook](https://make.wordpress.org/polyglots/handbook/tools/glotpress-translate-wordpress-org/), then select your locale at [Translating WordPress](https://translate.wordpress.org/) and finally go to the [translation page for this plugin](https://translate.wordpress.org/projects/wp-plugins/block-ecommerce-assets-via-robots-txt/) to translate it.
 
 = Further Reading =
 You can access the description of the plugin in Spanish at: [Sitelinks Search Box en castellano](http://apasionados.es/blog/marcado-google-sitelinks-search-box-wordpress-plugin-2873/).
@@ -83,6 +88,9 @@ Of course we do. ;-)
 
 == Changelog ==
 
+= 1.5 (01feb2026) =
+* Function _load_textdomain_just_in_time was called incorrectly & Security improvements.
+
 = 1.3 =
 * Updated get_site_url() to get_home_url() to match guideline "url - This property specifies the URL of your website. It must match the canonical URL of your domain's homepage". Thanks to hennell for pointing this out.
 
@@ -103,8 +111,8 @@ Of course we do. ;-)
 
 == Upgrade Notice ==
 
-= 1.3 =
-Updated get_site_url() to get_home_url() to match guideline "url - This property specifies the URL of your website. It must match the canonical URL of your domain's homepage".
+= 1.5 =
+UPDATED: Function _load_textdomain_just_in_time was called incorrectly & Security improvements.
 
 == Contact ==
 
